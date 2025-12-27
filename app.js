@@ -12,20 +12,42 @@ let currentFilter = 'all';
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
-  try {
-    // Fetch user profile and repos in parallel
-    const [profile, repos] = await Promise.all([
-      fetchUserProfile(),
-      fetchAllRepos()
-    ]);
+  // Fetch user profile and repos in parallel, handling failures separately
+  const [profileResult, reposResult] = await Promise.allSettled([
+    fetchUserProfile(),
+    fetchAllRepos()
+  ]);
 
-    updateProfileUI(profile);
-    allRepos = sortRepos(repos);
+  let profileError = null;
+  let reposError = null;
+
+  if (profileResult.status === 'fulfilled') {
+    updateProfileUI(profileResult.value);
+  } else {
+    profileError = profileResult.reason;
+    console.error('Error fetching GitHub profile:', profileError);
+  }
+
+  if (reposResult.status === 'fulfilled') {
+    allRepos = sortRepos(reposResult.value);
     renderProjects(allRepos);
     setupFilterButtons();
-  } catch (error) {
-    console.error('Error initializing app:', error);
-    showError('Failed to load data from GitHub. Please try again later.');
+  } else {
+    reposError = reposResult.reason;
+    console.error('Error fetching GitHub repositories:', reposError);
+  }
+
+  // Show specific error messages depending on what failed
+  if (profileError || reposError) {
+    let message;
+    if (profileError && reposError) {
+      message = 'Failed to load GitHub profile and repositories. Please check your network connection or try again later.';
+    } else if (profileError) {
+      message = 'Failed to load GitHub profile. Some information may be missing.';
+    } else {
+      message = 'Failed to load GitHub repositories. Profile information is shown, but projects could not be loaded.';
+    }
+    showError(message);
   }
 }
 
@@ -36,11 +58,13 @@ async function fetchUserProfile() {
   return response.json();
 }
 
-// Fetch all repositories (handles pagination)
+// Fetch all repositories (handles pagination with progress indicator)
 async function fetchAllRepos() {
   let allRepos = [];
   let page = 1;
   let hasMore = true;
+
+  updateLoadingMessage('Loading repositories...');
 
   while (hasMore) {
     const response = await fetch(
@@ -51,12 +75,25 @@ async function fetchAllRepos() {
     const repos = await response.json();
     allRepos = allRepos.concat(repos);
 
+    // Update loading message with progress
+    if (repos.length === REPOS_PER_PAGE) {
+      updateLoadingMessage(`Loading repositories... (${allRepos.length} loaded)`);
+    }
+
     // Check if there are more pages
     hasMore = repos.length === REPOS_PER_PAGE;
     page++;
   }
 
   return allRepos;
+}
+
+// Update the loading message in the projects grid
+function updateLoadingMessage(message) {
+  const loadingEl = document.querySelector('.loading p');
+  if (loadingEl) {
+    loadingEl.textContent = message;
+  }
 }
 
 // Sort repos: original repos first (by updated date), then forks (by updated date)
@@ -76,10 +113,11 @@ function sortRepos(repos) {
 
 // Update profile UI with fetched data
 function updateProfileUI(profile) {
-  // Avatar
+  // Avatar - remove aria-hidden now that we have real content
   const avatar = document.getElementById('avatar');
   avatar.src = profile.avatar_url;
   avatar.alt = `${profile.name || profile.login}'s avatar`;
+  avatar.removeAttribute('aria-hidden');
 
   // Name
   const nameEl = document.getElementById('name');
