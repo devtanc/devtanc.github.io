@@ -222,8 +222,8 @@ function createProjectCard(repo) {
         </span>
       </div>
       <div class="project-updated">Updated ${updatedDate}</div>
-      ${repo.homepage ? `
-        <a href="${repo.homepage}" target="_blank" rel="noopener noreferrer" class="project-demo">
+      ${repo.homepage && repo.homepage.startsWith('http') ? `
+        <a href="${escapeHtml(repo.homepage)}" target="_blank" rel="noopener noreferrer" class="project-demo">
           View Demo
         </a>
       ` : ''}
