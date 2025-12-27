@@ -109,6 +109,11 @@ body {
   color: var(--color-highlight);
 }
 
+.social-link:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
+}
+
 .social-link.hidden {
   display: none;
 }
@@ -209,6 +214,11 @@ body {
   color: var(--color-text);
 }
 
+.filter-btn:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
+}
+
 .filter-btn.active {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
@@ -267,6 +277,11 @@ body {
 
 .project-title a:hover {
   text-decoration: underline;
+}
+
+.project-title a:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
 }
 
 .fork-badge {
@@ -344,6 +359,11 @@ body {
   background-color: var(--color-accent-hover);
 }
 
+.project-demo:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
+}
+
 /* Loading State */
 .loading {
   grid-column: 1 / -1;
@@ -403,6 +423,11 @@ body {
   background-color: var(--color-accent-hover);
 }
 
+.error-message button:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
+}
+
 /* No Results */
 .no-results {
   grid-column: 1 / -1;
@@ -427,6 +452,11 @@ body {
 
 .footer a:hover {
   text-decoration: underline;
+}
+
+.footer a:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
 }
 
 /* Responsive Design */

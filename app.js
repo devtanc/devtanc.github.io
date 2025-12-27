@@ -4,6 +4,14 @@
 const GITHUB_USERNAME = 'devtanc';
 const REPOS_PER_PAGE = 100; // Max allowed by GitHub API
 
+// Helper to escape HTML and prevent XSS
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // State
 let allRepos = [];
 let currentFilter = 'all';
@@ -186,13 +194,13 @@ function createProjectCard(repo) {
     <article class="project-card ${repo.fork ? 'is-fork' : ''}">
       <div class="project-header">
         <h3 class="project-title">
-          <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">
-            ${repo.name}
+          <a href="${escapeHtml(repo.html_url)}" target="_blank" rel="noopener noreferrer">
+            ${escapeHtml(repo.name)}
           </a>
         </h3>
         ${repo.fork ? '<span class="fork-badge">Fork</span>' : ''}
       </div>
-      <p class="project-description">${repo.description || 'No description available.'}</p>
+      <p class="project-description">${escapeHtml(repo.description) || 'No description available.'}</p>
       <div class="project-meta">
         ${repo.language ? `
           <span class="project-language">
@@ -228,8 +236,12 @@ function setupFilterButtons() {
   const buttons = document.querySelectorAll('.filter-btn');
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
+      buttons.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       currentFilter = btn.dataset.filter;
       renderProjects(allRepos);
     });
@@ -246,9 +258,16 @@ function formatDate(dateString) {
   if (diffDays === 0) return 'today';
   if (diffDays === 1) return 'yesterday';
   if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
-  return `${Math.floor(diffDays / 365)} years ago`;
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+  }
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+  }
+  const years = Math.floor(diffDays / 365);
+  return `${years} ${years === 1 ? 'year' : 'years'} ago`;
 }
 
 // Get language color (based on GitHub's language colors)
@@ -291,10 +310,17 @@ function getLanguageColor(language) {
 // Show error message
 function showError(message) {
   const grid = document.getElementById('projects-grid');
+  if (!grid) return;
+
   grid.innerHTML = `
     <div class="error-message">
-      <p>${message}</p>
-      <button onclick="location.reload()">Retry</button>
+      <p>${escapeHtml(message)}</p>
+      <button type="button" class="retry-button">Retry</button>
     </div>
   `;
+
+  const retryButton = grid.querySelector('.retry-button');
+  if (retryButton) {
+    retryButton.addEventListener('click', () => location.reload());
+  }
 }

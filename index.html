@@ -6,7 +6,7 @@
   <title>devtanc | Developer Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap&font-display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -26,7 +26,7 @@
           </a>
           <a href="" id="blog-link" target="_blank" rel="noopener noreferrer" class="social-link hidden">
             <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1 17.414L5.586 12 7 10.586l4 4 8-8L20.414 8 11 17.414z"/>
+              <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm7.931 9h-2.764a14.67 14.67 0 0 0-1.792-6.243A8.013 8.013 0 0 1 19.931 11zm-6.328-6.755C14.552 5.682 15.352 8.067 15.631 11h-3.228V4.245c.236.038.476.08.8.245zm-2.006 0c.324-.165.564-.207.8-.245V11H7.369c.279-2.933 1.079-5.318 2.028-6.755zM11.397 13v6.755c-.236-.038-.476-.08-.8-.245-.949-1.437-1.749-3.822-2.028-6.755h2.828zm.803.245c.324.165.564.207.8.245V20h-2.828c-.279-2.933-1.079-5.318-2.028-6.755h3.256zM8.625 4.757A14.67 14.67 0 0 0 6.833 11H4.069a8.013 8.013 0 0 1 4.556-6.243zM4.069 13h2.764a14.67 14.67 0 0 0 1.792 6.243A8.013 8.013 0 0 1 4.069 13zm11.306 6.243A14.67 14.67 0 0 0 17.167 13h2.764a8.013 8.013 0 0 1-4.556 6.243z"/>
             </svg>
             Blog
           </a>
@@ -64,9 +64,9 @@
       <h2>Projects</h2>
       <p class="section-desc">My original repositories, sorted by recent activity. Forks are shown at the end.</p>
       <div class="filter-controls">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="original">Original Only</button>
-        <button class="filter-btn" data-filter="forks">Forks Only</button>
+        <button class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-btn" data-filter="original" aria-pressed="false">Original Only</button>
+        <button class="filter-btn" data-filter="forks" aria-pressed="false">Forks Only</button>
       </div>
       <div class="projects-grid" id="projects-grid">
         <div class="loading">
